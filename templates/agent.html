@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block title %}Poste Agent{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .agent-header {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .agent-header h1 {
+        color: var(--btn-primary);
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .agent-badge {
+        background: var(--btn-danger);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .control-panel {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    .control-panel h2 {
+        margin-bottom: 20px;
+        color: var(--text-primary);
+        font-size: 18px;
+    }
+
+    .control-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-control {
+        flex: 1;
+        min-width: 200px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-start {
+        background: var(--btn-success);
+        color: white;
+    }
+
+    .btn-start:hover:not(:disabled) {
+        background: var(--btn-success-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-stop {
+        background: var(--btn-danger);
+        color: white;
+    }
+
+    .btn-stop:hover:not(:disabled) {
+        background: var(--btn-danger-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-control:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .video-section {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    .video-section h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .video-container {
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .video-stream {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .alert-actions {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    .alert-actions h2 {
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+
+    .alert-info {
+        background: var(--bg-primary);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .alert-info p {
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    .alert-info p:last-child {
+        margin-bottom: 0;
+    }
+
+    .alert-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-alert {
+        flex: 1;
+        min-width: 200px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-valider {
+        background: var(--btn-success);
+        color: white;
+    }
+
+    .btn-valider:hover {
+        background: var(--btn-success-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-rejeter {
+        background: var(--btn-danger);
+        color: white;
+    }
+
+    .btn-rejeter:hover {
+        background: var(--btn-danger-hover);
+        transform: translateY(-2px);
+    }
+
+    .system-status {
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .system-status h3 {
+        margin-bottom: 15px;
+        font-size: 16px;
+        color: var(--text-secondary);
+        letter-spacing: 1px;
+    }
+
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+
+    .status-item {
+        background: var(--bg-primary);
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+
+    .status-item strong {
+        color: var(--btn-primary);
+        display: block;
+        margin-bottom: 5px;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .status-item span {
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: var(--btn-success);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        animation: slideUp 0.3s ease-out;
+        max-width: 90vw;
+        font-weight: 500;
+    }
+
+    .toast.error {
+        background: var(--btn-danger);
+    }
+
+    .toast.warning {
+        background: #d97706;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+        .agent-header h1 { font-size: 20px; }
+
+        .control-buttons { flex-direction: column; gap: 10px; }
+
+        .btn-control {
+            width: 100%;
+            min-width: unset;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        .alert-buttons { flex-direction: column; gap: 10px; }
+
+        .btn-alert {
+            width: 100%;
+            min-width: unset;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        .status-grid { grid-template-columns: repeat(2, 1fr); }
+
+        .video-section,
+        .control-panel,
+        .alert-actions,
+        .system-status { padding: 15px; }
+    }
+
+    @media (max-width: 480px) {
+        .status-grid { grid-template-columns: 1fr; }
+        .agent-header h1 { font-size: 17px; }
+        .toast { bottom: 15px; right: 15px; left: 15px; text-align: center; }
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="agent-header">
+    <h1>&#128737; POSTE DE SURVEILLANCE</h1>
+    <span class="agent-badge">&#128308; AGENT CONNECTE: {{ user_name }}</span>
+</div>
+
+<div class="control-panel">
+    <h2>&#9881; Controle de la Detection</h2>
+    <div class="control-buttons">
+        <button class="btn-control btn-start" onclick="startDetection()" id="btnStart"
+                {% if detection_active %}disabled{% endif %}>
+            DEMARRER LA DETECTION
+        </button>
+        <button class="btn-control btn-stop" onclick="stopDetection()" id="btnStop"
+                {% if not detection_active %}disabled{% endif %}>
+            ARRETER LA DETECTION
+        </button>
+    </div>
+</div>
+
+<div class="video-section">
+    <h2>Flux Camera en Temps Reel</h2>
+    <div class="video-container">
+        <img src="/video" class="video-stream" alt="Flux video">
+    </div>
+</div>
+
+<div class="alert-actions">
+    <h2>Gestion des Alertes</h2>
+
+```
+<div class="alert-info">
+    <p><strong>Alertes en attente:</strong> {{ alertes_en_attente }}</p>
+    <p><strong>Total detections:</strong> {{ total_alertes }}</p>
+    <p><strong>Confiance moyenne:</strong> {{ "%.1f"|format(moyenne_confiance) }}%</p>
+</div>
+
+<div class="alert-buttons">
+    <button class="btn-alert btn-valider" onclick="validerAlerte()">
+        VALIDER ET ENVOYER EMAIL
+    </button>
+    <button class="btn-alert btn-rejeter" onclick="rejeterAlerte()">
+        REJETER L'ALERTE
+    </button>
+</div>
+```
+
+</div>
+
+<div class="system-status">
+    <h3>STATUT SYSTEME</h3>
+    <div class="status-grid">
+        <div class="status-item">
+            <strong>IA</strong>
+            <span>ACTIVE</span>
+        </div>
+        <div class="status-item">
+            <strong>MODELE</strong>
+            <span>YOLOv8</span>
+        </div>
+        <div class="status-item">
+            <strong>DETECTION</strong>
+            <span id="detectionStatus">
+                {% if detection_active %}EN COURS{% else %}PAUSE{% endif %}
+            </span>
+        </div>
+        <div class="status-item">
+            <strong>ALERTES</strong>
+            <span>TEMPS REEL</span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    function showToast(message, type) {
+        if (type === undefined) { type = 'success'; }
+        var toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(function() {
+            toast.style.animation = 'slideUp 0.3s ease-out reverse';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    }
+
+    function startDetection() {
+        fetch('/start_detection', { method: 'POST' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                showToast('Detection demarree', 'success');
+                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStop').disabled = false;
+                document.getElementById('detectionStatus').innerHTML = 'EN COURS';
+            })
+            .catch(function(err) {
+                showToast('Erreur demarrage', 'error');
+            });
+    }
+
+    function stopDetection() {
+        fetch('/stop_detection', { method: 'POST' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                showToast('Detection arretee', 'success');
+                document.getElementById('btnStart').disabled = false;
+                document.getElementById('btnStop').disabled = true;
+                document.getElementById('detectionStatus').innerHTML = 'PAUSE';
+            })
+            .catch(function(err) {
+                showToast('Erreur arret', 'error');
+            });
+    }
+
+    function validerAlerte() {
+        if (!confirm("Confirmer la validation et l'envoi d'email ?")) { return; }
+
+        fetch('/valider_alerte', { method: 'POST' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                showToast(data.message, data.status);
+                setTimeout(function() { location.reload(); }, 2000);
+            })
+            .catch(function(err) {
+                showToast('Erreur validation', 'error');
+            });
+    }
+
+    function rejeterAlerte() {
+        if (!confirm("Confirmer le rejet de l'alerte ?")) { return; }
+
+        fetch('/rejeter_alerte', { method: 'POST' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                showToast(data.message, data.status);
+                setTimeout(function() { location.reload(); }, 2000);
+            })
+            .catch(function(err) {
+                showToast('Erreur rejet', 'error');
+            });
+    }
+
+    setInterval(function() {
+        fetch('/api/stats')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                var infos = document.querySelectorAll('.alert-info p');
+                if (infos.length >= 3) {
+                    infos[0].innerHTML = '<strong>Alertes en attente:</strong> ' + data.alertes_en_attente;
+                    infos[1].innerHTML = '<strong>Total detections:</strong> ' + data.total_alertes;
+                    infos[2].innerHTML = '<strong>Confiance moyenne:</strong> ' + data.moyenne_confiance.toFixed(1) + '%';
+                }
+            });
+    }, 10000);
+</script>
+
+{% endblock %}

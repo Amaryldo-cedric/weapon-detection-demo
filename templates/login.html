@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion Agent{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================ */
+    /* PAGE LOGIN */
+    /* ============================================ */
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+    }
+    
+    .login-card {
+        background: var(--bg-card);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border: 2px solid var(--border-color);
+        width: 100%;
+        max-width: 450px;
+    }
+    
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .login-header h1 {
+        color: var(--btn-primary);
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+    
+    .login-header p {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    
+    .security-badge {
+        background: var(--btn-danger);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 12px 15px;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 15px;
+        transition: 0.3s;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--btn-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .form-input::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: var(--btn-primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+    
+    .btn-login:hover {
+        background: var(--btn-primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+    }
+    
+    .btn-login:active {
+        transform: translateY(0);
+    }
+    
+    .login-footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .login-footer p {
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+    
+    .demo-credentials {
+        background: var(--bg-primary);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        border-left: 4px solid var(--accent-warning);
+    }
+    
+    .demo-credentials h3 {
+        color: var(--accent-warning);
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .demo-credentials p {
+        color: var(--text-secondary);
+        font-size: 13px;
+        margin: 5px 0;
+    }
+    
+    .demo-credentials code {
+        background: var(--bg-secondary);
+        padding: 2px 8px;
+        border-radius: 4px;
+        color: var(--btn-primary);
+        font-family: 'Courier New', monospace;
+    }
+    
+    .icon-lock {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="icon-lock"><i class="fas fa-user-shield"></i></div>
+            <h1>Espace Agent Sécurisé</h1>
+            <p>Accès réservé au personnel autorisé</p>
+            <span class="security-badge">🛡️ ZONE PROTÉGÉE</span>
+        </div>
+        
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label class="form-label" for="email">📧 Adresse Email</label>
+                <input 
+                type="email" 
+                    id="email" 
+                    name="email" 
+                    class="form-input" 
+                    placeholder="exemple@cfpd-isgd.edu"
+                    required
+                    autofocus
+                >
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="password">🔑 Mot de Passe</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="••••••••"
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="btn-login">
+                 Se Connecter
+            </button>
+        </form>
+        
+        <!-- Identifiants de démonstration -->
+        <div class="demo-credentials">
+            <h3>⚠️ Identifiants de Test</h3>
+            <p>📧 Email: <code>admin@test.com</code></p>
+            <p>🔑 Mot de passe: <code>Admin123!</code></p>
+        </div>
+        
+        <div class="login-footer">
+            <p>© 2024-2025 CFPD-ISGD - Tous droits réservés</p>
+            <p>Système de Détection d'Armes par IA</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-suppression des messages flash après 5 secondes
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => alert.remove(), 300);
+        });
+    }, 5000);
+    
+    // Animation de disparition
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOut {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

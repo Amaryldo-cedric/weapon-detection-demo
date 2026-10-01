@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}Historique{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    /* ============================================ */
+    /* PAGE HISTORIQUE */
+    /* ============================================ */
+    .historique-header {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .historique-header h1 {
+        color: var(--btn-primary);
+        font-size: 32px;
+        margin-bottom: 15px;
+    }
+
+    .stats-bar {
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-box {
+        background: var(--bg-primary);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+    }
+
+    .stat-box .label {
+        color: var(--text-secondary);
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-box .value {
+        color: var(--btn-primary);
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .filter-bar {
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: 500;
+    }
+
+    .filter-btn:hover {
+        border-color: var(--btn-primary);
+        color: var(--btn-primary);
+    }
+
+    .filter-btn.active {
+        background: var(--btn-primary);
+        color: white;
+        border-color: var(--btn-primary);
+    }
+
+    .detections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .detection-card {
+        background: var(--bg-card);
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+    .detection-card:hover {
+        border-color: var(--btn-primary);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+    }
+
+    /* ============================================ */
+    /* CORRECTION IMAGE : height fixe + object-fit */
+    /* ============================================ */
+    .card-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-bottom: 2px solid var(--border-color);
+        background: var(--bg-primary);
+        display: block;
+    }
+
+    .card-content {
+        padding: 20px;
+    }
+
+    .card-alert {
+        background: var(--btn-danger);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    .card-info {
+        margin-bottom: 10px;
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    .card-info strong {
+        color: var(--text-primary);
+    }
+
+    .confidence-bar {
+        background: var(--bg-primary);
+        height: 8px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--btn-success), var(--accent-warning));
+        border-radius: 10px;
+        transition: width 0.3s;
+    }
+
+    .confidence-value {
+        color: var(--accent-warning);
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .status-enattente {
+        background: var(--accent-warning);
+        color: #000;
+    }
+
+    .status-validee {
+        background: var(--btn-success);
+        color: white;
+    }
+
+    .status-rejetee {
+        background: #6b7280;
+        color: white;
+    }
+
+    .card-actions {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-delete {
+        flex: 1;
+        padding: 10px;
+        background: var(--btn-danger);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn-delete:hover {
+        background: var(--btn-danger-hover);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--bg-card);
+        border-radius: 10px;
+        border: 2px dashed var(--border-color);
+    }
+
+    .empty-state .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .historique-header h1 {
+            font-size: 22px;
+        }
+
+        .filter-group {
+            width: 100%;
+        }
+
+        .filter-btn {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .detections-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+
+<div class="historique-header">
+    <h1>📂 Historique des Détections</h1>
+    <p style="color: var(--text-secondary);">Consultez et gérez toutes les alertes du système</p>
+</div>
+
+<!-- Statistiques -->
+
+<div class="stats-bar">
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="label"><i class="fas fa-chart-bar"></i> Total Alertes</div>
+            <div class="value">{{ total_alertes }}</div>
+        </div>
+        <div class="stat-box">
+            <div class="label"><i class="fas fa-clock"></i> En Attente</div>
+            <div class="value">{{ alertes_en_attente }}</div>
+        </div>
+        <div class="stat-box">
+            <div class="label"><i class="fas fa-chart-line"></i> Confiance Moyenne</div>
+            <div class="value">{{ "%.1f"|format(moyenne_confiance) }}%</div>
+        </div>
+        <div class="stat-box">
+            <div class="label"><i class="fas fa-calendar-alt"></i> Dernière Détection</div>
+            <div class="value" style="font-size: 14px;">{{ derniere_detection }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+
+<div class="filter-bar">
+    <div class="filter-group">
+        <span style="color: var(--text-secondary); font-weight: 500;">Filtrer par:</span>
+        <button class="filter-btn active" onclick="filterStatus('all', this)">Toutes</button>
+        <button class="filter-btn" onclick="filterStatus('EN_ATTENTE', this)">En Attente</button>
+        <button class="filter-btn" onclick="filterStatus('VALIDEE', this)">Validées</button>
+        <button class="filter-btn" onclick="filterStatus('REJETEE', this)">Rejetées</button>
+    </div>
+</div>
+
+<!-- Grid Détections -->
+
+{% if detections %}
+<div class="detections-grid" id="detectionsGrid">
+{% for det in detections %}
+<div class="detection-card" data-status="{{ det[4] }}">
+
+```
+        <!--
+            CORRECTION IMAGE :
+            Le chemin en base est "captures/arme_xxx.jpg"
+            Flask sert les fichiers statiques via /static/
+            Donc l'URL correcte est /static/captures/arme_xxx.jpg
+            On utilise url_for('static', filename=det[2]) directement
+            car det[2] contient déjà "captures/arme_xxx.jpg"
+        -->
+        <img src="{{ url_for('static', filename=det[2]) }}"
+             alt="Détection {{ det[1] }}"
+             class="card-image"
+             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%231e293b%22 width=%22300%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%2394a3b8%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2214%22%3EImage non disponible%3C/text%3E%3C/svg%3E'">
+
+        <div class="card-content">
+            <span class="card-alert">⚠️ ARME DÉTECTÉE</span>
+
+            <p class="card-info">
+                <strong>🕐 Date:</strong> {{ det[1] }}
+            </p>
+
+            <p class="card-info">
+                <strong>📷 Image:</strong> {{ det[2].split('/')[-1] }}
+            </p>
+
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ (det[3]|float * 100)|round(1) }}%"></div>
+            </div>
+            <p class="card-info">
+                <strong>🎯 Confiance:</strong>
+                <span class="confidence-value">{{ "%.2f"|format(det[3] * 100) }}%</span>
+            </p>
+
+            <div>
+                <strong style="font-size: 13px; color: var(--text-secondary);">Statut:</strong>
+                <!--
+                    CORRECTION CSS status badge :
+                    "EN_ATTENTE" → classe "status-enattente"
+                    (l'ancien code générait "status-en_attente" qui ne matchait aucune classe)
+                -->
+                {% set statut_lower = det[4].lower().replace('_', '') %}
+                <span class="status-badge status-{{ statut_lower }}">
+                    {{ det[4] }}
+                </span>
+            </div>
+
+            {% if det[5] %}
+            <p class="card-info" style="margin-top: 10px;">
+                <strong>👮 Traité par:</strong> {{ det[5] }}
+            </p>
+            {% endif %}
+
+            <div class="card-actions">
+                <form action="/supprimer/{{ det[0] }}" method="post"
+                      onsubmit="return confirm('Supprimer cette détection ?');" style="flex: 1;">
+                    <button type="submit" class="btn-delete">
+                        🗑️ Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+```
+
+{% else %}
+<div class="empty-state">
+<div class="icon">📭</div>
+<h3>Aucune détection enregistrée</h3>
+<p>Les alertes apparaîtront ici dès qu'une arme sera détectée</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    // CORRECTION : passage du bouton cliqué en paramètre pour éviter d'utiliser event.target
+    function filterStatus(status, clickedBtn) {
+        const cards = document.querySelectorAll('.detection-card');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        // Mettre à jour les boutons
+        buttons.forEach(btn => btn.classList.remove('active'));
+        clickedBtn.classList.add('active');
+
+        // Filtrer les cards
+        cards.forEach(card => {
+            if (status === 'all' || card.dataset.status === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+{% endblock %}
