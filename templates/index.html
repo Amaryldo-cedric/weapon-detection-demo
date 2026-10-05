@@ -248,6 +248,53 @@
     </div>
 </div>
 
+
+<!-- Démonstration IA par image -->
+<div class="video-section">
+    <div class="video-header">
+        <h2 class="video-title">
+            <i class="fa-solid fa-image"></i> Tester la détection par image
+        </h2>
+    </div>
+
+    <div style="text-align:center; padding:20px;">
+
+        <p style="color:var(--text-secondary); margin-bottom:20px;">
+            Importez une image pour tester automatiquement la détection d'armes par IA.
+        </p>
+
+        <form action="{{ url_for('detect_image') }}" method="POST" enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="image"
+                accept="image/*"
+                required
+                style="
+                    padding:12px;
+                    border:2px solid var(--border-color);
+                    border-radius:8px;
+                    margin-bottom:15px;
+                    width:100%;
+                    max-width:500px;
+                "
+            >
+
+            <br>
+
+            <button
+                type="submit"
+                class="btn-access"
+                style="border:none; cursor:pointer;"
+            >
+                <i class="fas fa-search"></i>
+                Analyser l'image
+            </button>
+
+        </form>
+
+    </div>
+</div>
 <!-- Accès Agent -->
 <div class="access-agent">
     <h2><i class="fas fa-sign-out-alt"></i>  Accès Espace Agent</h2>

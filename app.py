@@ -289,6 +289,60 @@ def index():
 def video():
     return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+@app.route("/detect_image", methods=["POST"])
+def detect_image():
+    # Vérifier qu'une image a été envoyée
+    if "image" not in request.files:
+        flash("Aucune image sélectionnée", "error")
+        return redirect(url_for("index"))
+
+    file = request.files["image"]
+
+    # Vérifier que le fichier n'est pas vide
+    if file.filename == "":
+        flash("Aucune image sélectionnée", "error")
+        return redirect(url_for("index"))
+
+    # Créer le dossier de résultats
+    os.makedirs("static/demo", exist_ok=True)
+
+    # Nom temporaire de l'image originale
+    input_path = os.path.join("static/demo", "image_test.jpg")
+
+    # Sauvegarder l'image
+    file.save(input_path)
+
+    try:
+        # Lire l'image
+        image = cv2.imread(input_path)
+
+        if image is None:
+            flash("Impossible de lire cette image", "error")
+            return redirect(url_for("index"))
+
+        # Effectuer la détection avec YOLO
+        results = model(image, conf=0.25, iou=0.4, verbose=False)
+
+        # Image annotée avec les détections
+        annotated_image = results[0].plot()
+
+        # Sauvegarder le résultat
+        output_path = os.path.join("static/demo", "resultat.jpg")
+        cv2.imwrite(output_path, annotated_image)
+
+        # Compter les détections
+        detections_count = len(results[0].boxes)
+
+        return render_template(
+            "resultat.html",
+            image_result="/static/demo/resultat.jpg",
+            detections_count=detections_count
+        )
+
+    except Exception as e:
+        print("Erreur détection image :", e)
+        flash("Une erreur est survenue pendant la détection", "error")
+        return redirect(url_for("index"))
 # ============================================
 # ROUTES AUTHENTIFICATION
 # ============================================

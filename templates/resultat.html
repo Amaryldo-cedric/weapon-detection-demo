@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Résultat de la détection{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 30px;
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .result-title {
+        color: var(--btn-primary);
+        font-size: 30px;
+        margin-bottom: 15px;
+    }
+
+    .result-info {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        font-size: 17px;
+    }
+
+    .detection-count {
+        display: inline-block;
+        padding: 12px 25px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        background: var(--btn-primary);
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .result-image {
+        width: 100%;
+        max-width: 900px;
+        border-radius: 12px;
+        border: 3px solid var(--border-color);
+        display: block;
+        margin: 0 auto 30px auto;
+    }
+
+    .btn-back {
+        display: inline-block;
+        padding: 14px 30px;
+        background: var(--btn-primary);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn-back:hover {
+        background: var(--btn-primary-hover);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="result-container">
+
+    <h1 class="result-title">
+        🤖 Résultat de l'analyse IA
+    </h1>
+
+    <p class="result-info">
+        Voici l'image analysée par le modèle YOLO.
+    </p>
+
+    <div class="detection-count">
+        🔍 {{ detections_count }} détection(s) trouvée(s)
+    </div>
+
+    <img
+        src="{{ image_result }}"
+        class="result-image"
+        alt="Résultat de la détection"
+    >
+
+    <a href="{{ url_for('index') }}" class="btn-back">
+        ← Tester une autre image
+    </a>
+
+</div>
+
+{% endblock %}
